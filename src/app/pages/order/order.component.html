@@ -1,0 +1,152 @@
+<nb-layout>
+  <nb-layout-column class="big">
+      <nb-card>
+          <nb-card-header>
+            Order
+          </nb-card-header>
+        
+          <nb-card-body>
+                  
+                  <div class="row full-name-inputs">
+                      <div class="col-sm-6 form-group">
+                          <label>Name</label>
+                          <input (input)="create_user.name = $event.target.value;" type="text" placeholder="Name" class="form-control"/>
+                      </div>
+                      <div class="col-sm-6 form-group">
+                          <label>Email</label>
+                          <input (input)="create_user.email_address = $event.target.value;" type="email" placeholder="Email" class="form-control"/>
+                      </div>
+                      <div class="col-sm-6 form-group">
+                          <label>Phone</label>
+                          <input (input)="create_user.phone_number = $event.target.value;" type="text" placeholder="Phone" class="form-control"/>
+                      </div>
+                      <div class="col-sm-6 form-group">
+                          <label>Address</label>
+                          <input (input)="create_user.address = $event.target.value;" type="text" placeholder="Address" class="form-control"/>
+                      </div>
+                      <div class="divider-with-text">OR</div>
+
+                      <div class="col-sm-12 form-group">
+                          <label>Search Customer</label>
+                          <select2 [data]="emails | async" [value]="startValue | async"  (valueChanged)="changedEmail($event)"  class="form-control-select"></select2>
+                      </div>
+
+                      <div class="divider"></div>
+                      <div class="col-sm-12" style="margin-bottom: 1rem;">
+                          <label style="display: block;">Item Pricing</label>
+                          <label class="custom-control custom-radio">
+                            <input type="radio" checked class="custom-control-input" name="items_pricing" ng-control="items_pricing" [value]="0" [(ngModel)]="data.items_pricing">
+                            <span class="custom-control-indicator"></span>
+                            <span class="custom-control-description">Per Item</span>
+                          </label>
+                          <label class="custom-control custom-radio">
+                            <input type="radio" class="custom-control-input" name="items_pricing" ng-control="items_pricing" [value]="1" [(ngModel)]="data.items_pricing">
+                            <span class="custom-control-indicator"></span>
+                            <span class="custom-control-description">Weight Only</span>
+                          </label>
+                          <label class="custom-control custom-radio">
+                            <input type="radio" class="custom-control-input" name="items_pricing" ng-control="items_pricing" [value]="2" [(ngModel)]="data.items_pricing">
+                            <span class="custom-control-indicator"></span>
+                            <span class="custom-control-description">Item and weight</span>
+                          </label>
+                      </div>
+                      <div class="col-sm-6 form-group">
+                          <label>No. of bags</label>
+                          <input class="form-control" type="number" min="1" max="100" value="1" (change)="addBags($event.target.value)" onkeydown="return false"/>
+                      </div>
+
+                      <div class="col-sm-12">
+                        <div class="row">
+                          <div class="col-sm-4" *ngFor="let data2 of data.requestbag_set;let i = index">
+                            <div class="input-group box-bags-inner box-bags">
+                              <label>Bag {{i + 1}}</label>
+                              <input placeholder="Weight" class="form-control" type="text" (input)="data.requestbag_set[i].weight = $event.target.value;"/>
+                                
+                                <div class="flex position-r" *ngFor="let item2 of data.requestbag_set[i].items;let in = index">
+                                    <select (change)="selitm($event.target.value, in, i)" class="form-control mt10 selc">
+                                      <option value="null">Select Item</option>
+                                      <option *ngFor="let item of items" value="{{ item.id }}">{{ item.name }}</option>
+                                    </select>
+                                    <input placeholder="Qty" class="form-control mt10 qtyc" type="text" (input)="qty($event.target.value, in, i)"/>
+                                    <span class="del" (click)="removeItem(in, i)">X</span>
+                                </div>
+                                <div class="input-group input-group-sm">
+                                  <span class="input-group-btn">
+                                    <button class="btn btn-primary mt10" (click)="addItem(in, i)">
+                                      Add Items
+                                    </button>
+                                  </span>
+                                </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+
+                      <div class="divider"></div>
+
+                    <div class="col-sm-12" style="margin-bottom: 1rem;">
+                        <label style="display: block;">Supplies Pricing</label>
+                        <label class="custom-control custom-radio">
+                          <input type="radio" checked class="custom-control-input" name="supplies_pricing" ng-control="supplies_pricing" [value]="0" [(ngModel)]="data.supplies_pricing">
+                          <span class="custom-control-indicator"></span>
+                          <span class="custom-control-description">By Bag</span>
+                        </label>
+                        <label class="custom-control custom-radio">
+                          <input type="radio" class="custom-control-input" name="supplies_pricing" ng-control="supplies_pricing" [value]="1" [(ngModel)]="data.supplies_pricing">
+                          <span class="custom-control-indicator"></span>
+                          <span class="custom-control-description">By Unit</span>
+                        </label>
+                        <label class="custom-control custom-radio">
+                          <input type="radio" class="custom-control-input" name="supplies_pricing" ng-control="supplies_pricing" [value]="2" [(ngModel)]="data.supplies_pricing">
+                          <span class="custom-control-indicator"></span>
+                          <span class="custom-control-description">Custom</span>
+                        </label>
+                    </div>
+
+                    <div class="col-sm-12 form-group">
+                        <label>Supplies</label>
+                        <select2 [data]="supplies | async" (valueChanged)="data.supplies = $event.value" [options]="itemOptions" [value]="startValue | async" class="form-control-select"></select2>
+                    </div>
+
+                    <div class="col-sm-12 form-group">
+                        <label>Customer Comments</label>
+                        <textarea [value]="data.customer_comments" (input)="data.customer_comments = $event.target.value"  rows="5" placeholder="Special Requiremen" class="form-control"></textarea>
+                    </div>
+  
+                      <div class="col-sm-6 form-group">
+                          <label>Delivery Date</label>
+                          <input type="date" class="form-control" (input)="data.delivery_date = $event.target.value;"/>
+                      </div>
+                  
+                  </div>
+
+
+                
+                <div class="input-group input-group-md mt20">
+                    <span class="input-group-btn">
+                      <button class="btn btn-primary" (click)="submit()">
+                        Submit
+                        <img *ngIf="loading" id="btnloader" style="max-width: 20px;" src="assets/images/oval.svg">
+                      </button>
+                    </span>
+                  </div>
+                  {{ sucess }}
+                  {{ suberr }}
+  
+          </nb-card-body>
+        </nb-card>
+  </nb-layout-column>
+  
+  <nb-layout-column  class="small">
+      <nb-card>
+          <nb-card-header>
+            Receipt
+          </nb-card-header>
+        
+          <nb-card-body>
+            <Receipt [data]='data' [orderno]='orderno'></Receipt>
+          </nb-card-body>
+        </nb-card>
+  </nb-layout-column>
+  </nb-layout>
