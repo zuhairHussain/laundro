@@ -1,13 +1,16 @@
-import { Component,Input, OnInit } from '@angular/core';
+import { Component,Input, OnInit ,ElementRef, NgZone, ViewChild } from '@angular/core';
 import { HttpService } from '../../@core/data/http-client';
 import { ReceiptComponent } from './receipt/receipt.component';
 import { Select2OptionData } from 'ng2-select2';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/delay';
 import { SmartTableService } from '../../@core/data/smart-table.service';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators,FormControl } from '@angular/forms';
 import { concat } from 'rxjs/operator/concat';
 import { Jsonp } from '@angular/http';
+import { } from 'googlemaps';
+import { MapsAPILoader } from '@agm/core';
+import { bounds } from 'leaflet';
 
 @Component({
   selector: 'order',
@@ -22,6 +25,10 @@ export class OrderComponent implements OnInit {
   public supplies: Observable<Array<Select2OptionData>>;
   public pricing;
   
+  public searchControl: FormControl;
+  @ViewChild("search")
+  public searchElementRef: ElementRef;
+
   /* Multi select Items */
   public itemOptions: Select2Options;
   public items = [];
@@ -32,7 +39,8 @@ export class OrderComponent implements OnInit {
   
   public loading = false;  
   public selectedItems = [];
-  constructor(private service: SmartTableService){
+  constructor(private service: SmartTableService, private mapsAPILoader: MapsAPILoader,
+    private ngZone: NgZone){
 
   }
 
@@ -46,7 +54,7 @@ export class OrderComponent implements OnInit {
       ],
       customer_comments: null,
       detail: null,
-      delivery_date: "",
+      delivery_date: null,
       supplies_pricing: 0,
       items_pricing: 0,
       custom_service_price: null,
@@ -61,6 +69,14 @@ export class OrderComponent implements OnInit {
     email_address : null,
     phone_number : null,
     address : null
+  }
+  address = {
+    address_line_1 : null,
+    address_line_2 : null,
+    longitude: null,
+    latitude : null,
+    city : 1
+
   }
   // data2 = {
   //   customer_comments: "",
@@ -127,6 +143,35 @@ export class OrderComponent implements OnInit {
      
       this.supplies = this.service.getSupplies();
 
+      //create search FormControl
+    this.searchControl = new FormControl();
+
+    //load Places Autocomplete
+    this.mapsAPILoader.load().then(() => {
+      let autocomplete = new google.maps.places.Autocomplete(this.searchElementRef.nativeElement, {
+        types: ["address"],
+        componentRestrictions: {country: "us"}
+      });
+      autocomplete.addListener("place_changed", () => {
+        this.ngZone.run(() => {
+          //get the place result
+          let place: google.maps.places.PlaceResult = autocomplete.getPlace();
+
+          //verify result
+          if (place.geometry === undefined || place.geometry === null) {
+            return;
+          }
+
+          this.address.longitude = place.geometry.location.lng();
+          this.address.latitude = place.geometry.location.lat();
+          this.address.address_line_1 = place.formatted_address;
+          this.address.address_line_2 = place.url;
+          
+          console.log(place)
+        });
+      });
+    });
+
   }
   changedEmail(event){
     this.data.customer = event.value;
@@ -170,12 +215,13 @@ export class OrderComponent implements OnInit {
     }
     else{
       let obj = this.create_user
-      if(obj.email_address != null && obj.name != null && obj.phone_number != null){
-        this.service.createCustomer(this.create_user)
+      if(obj.address != null, obj.email_address != null && obj.name != null && obj.phone_number != null){
+        
+        this.service.saveAddress(this.address)
         .subscribe(
-          data =>{
-            console.log(data)
-            this.data.customer = data.id;
+          address =>{
+            console.log(address)
+            this.create_user.address = address.id;
           },
           error => {
             this.loading = false;
@@ -183,9 +229,24 @@ export class OrderComponent implements OnInit {
             this.suberr = Object.values(err)[0];
           },
           () => {
-            this.request()            
+            this.service.createCustomer(this.create_user)
+            .subscribe(
+              data =>{
+                console.log(data)
+                this.data.customer = data.id;
+              },
+              error => {
+                this.loading = false;
+                let err = JSON.parse(error._body)
+                this.suberr = Object.values(err)[0];
+              },
+              () => {
+                this.request()            
+              }
+            )           
           }
         )
+
       }
       else{
         this.loading = false;        

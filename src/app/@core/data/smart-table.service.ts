@@ -65,7 +65,13 @@ saveData(data){
             return data.json();
         })
 }
-
+saveAddress(data){
+    return this.http
+        .post( GlobalService.serverApi +'addresses/', data)
+        .map(data => {
+            return data.json();
+        })
+}
   getData() {
       return this.http
           .get( GlobalService.serverApi +'customers/?format=json')
