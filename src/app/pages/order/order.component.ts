@@ -1,4 +1,4 @@
-import { Component,Input, OnInit ,ElementRef, NgZone, ViewChild } from '@angular/core';
+import { Component,Input, OnInit ,ElementRef, NgZone, ViewChild, OnChanges,DoCheck } from '@angular/core';
 import { HttpService } from '../../@core/data/http-client';
 import { ReceiptComponent } from './receipt/receipt.component';
 import { Select2OptionData } from 'ng2-select2';
@@ -19,11 +19,14 @@ import { bounds } from 'leaflet';
   
 })
 
-export class OrderComponent implements OnInit {
+export class OrderComponent implements OnInit,DoCheck {
   public emails: Observable<Array<Select2OptionData>>;
   public startValue: Observable<string>;
   public supplies: Observable<Array<Select2OptionData>>;
   public pricing;
+  public supplies2;
+  public customers;
+  
   
   public searchControl: FormControl;
   @ViewChild("search")
@@ -43,7 +46,9 @@ export class OrderComponent implements OnInit {
     private ngZone: NgZone){
 
   }
+  ngDoCheck(){
 
+  }
   data = {
       requestbag_set: [
           {
@@ -130,6 +135,11 @@ export class OrderComponent implements OnInit {
         this.pricing = data.results;
       })
       this.emails = this.service.getEmails();
+
+      this.service.getCustomers().subscribe(data => {
+        this.customers = data.results;
+      });
+
       this.service.getItems().subscribe(data => {
         this.items = data.results;
       });
@@ -143,8 +153,11 @@ export class OrderComponent implements OnInit {
      
       this.supplies = this.service.getSupplies();
 
+      this.service.getSupplies2().subscribe(data => {
+        this.supplies2 = data.results;
+      })
       //create search FormControl
-    this.searchControl = new FormControl();
+      this.searchControl = new FormControl();
 
     //load Places Autocomplete
     this.mapsAPILoader.load().then(() => {
@@ -206,7 +219,7 @@ export class OrderComponent implements OnInit {
   }
 
   submit(){
-
+    console.log(this.data.customer)
     this.loading = true;
     this.suberr = "";
     this.sucess = "";

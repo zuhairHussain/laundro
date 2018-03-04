@@ -1,6 +1,38 @@
+<div *ngIf="data.customer != 000" class="mb20"><span class="font-w-bold">Name</span> : {{ (customers | customersFilter : data.customer)?.name }}</div>
+<div *ngIf="data.customer != 000" class="mb20"><span class="font-w-bold">Phone</span> : {{ (customers | customersFilter : data.customer)?.phone_number }}</div>
 <div *ngIf="orderno" class="mb20"><span class="font-w-bold">Order#</span> : {{orderno}}</div>
 <div *ngIf="data.customer_comments" class="mb20"><span class="font-w-bold">Customer Comments</span> : {{data.customer_comments}}</div>
 <div *ngIf="data.delivery_date" class="mb20"><span class="font-w-bold">Delivery Date</span> : {{data.delivery_date}}</div>
 <div *ngIf="data.requestbag_set" class="mb20"><span class="font-w-bold">No of Bags</span> : {{data.requestbag_set.length}}</div>
-<div *ngIf="data.requestbag_set" class="mb20"><span class="font-w-bold">Items</span> : {{data.requestbag_set.length}}</div>
 
+    <div class="row">
+      <div class="col-sm-12" *ngFor="let data2 of data.requestbag_set;let i = index">
+        <div class="input-group box-bags-inner box-bags">
+            <label><span class="pull-left font-w-bold">Bag {{i + 1}}</span> <span *ngIf="data.requestbag_set[i].weight" class="pull-right"><span class="font-w-bold">Weight</span> : {{ data.requestbag_set[i].weight }}</span></label>
+
+            <div class="flex position-r" *ngFor="let item2 of data.requestbag_set[i].items;let in = index">
+                <div *ngIf="item2.item" class="divider mt20 mb20"></div>
+                
+                <div *ngIf="item2.item" class="mr20">
+                    <div *ngIf="data.items_pricing == 0" class="mr20">{{ (items | itemFilter : item2.item).name}} X 
+                        <span *ngIf="item2.quantity"> {{item2.quantity}} = {{ item2.quantity * (items | itemFilter : item2.item).unit_price }}</span>
+                    </div>
+                    <div *ngIf="data.items_pricing == 1" class="mr20">{{ (items | itemFilter : item2.item).name}} X 
+                        <span *ngIf="item2.quantity"> {{data.requestbag_set[i].weight}} = {{ data.requestbag_set[i].weight * (items | itemFilter : item2.item).price_per_lb }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="data.supplies != 0">
+        <div *ngIf="data.supplies" class="mb20"><span class="font-w-bold">Supplies Pricing</span> :</div>
+        
+        <div *ngFor="let supply of data.supplies" class="mb20">
+            <span *ngIf="data.supplies_pricing == 0">{{ (supplies | supplyFilter : supply).name }} = {{ (supplies | supplyFilter : supply).price_per_bag *  data.requestbag_set.length}}</span>
+            <span *ngIf="data.supplies_pricing == 1">{{ (supplies | supplyFilter : supply).name }} = {{ (supplies | supplyFilter : supply).price_per_lb }}</span>
+            <span *ngIf="data.supplies_pricing == 2">{{ (supplies | supplyFilter : supply).name }} = {{ (supplies | supplyFilter : supply).price_custom }}</span>
+        </div>
+
+    </div>

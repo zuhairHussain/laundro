@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { ThemeModule } from '../../@theme/theme.module';
 import { OrderComponent } from './order.component';
 import { ReceiptComponent } from './receipt/receipt.component';
-import { MyFilterPipe } from '../pipe';
+import { itemFilter,supplyFilter,customersFilter } from '../pipe';
 import { HttpService } from '../../@core/data/http-client';
 import { Select2Module } from 'ng2-select2';
 import { AgmCoreModule } from '@agm/core';
@@ -20,7 +20,9 @@ import { AgmCoreModule } from '@agm/core';
   declarations: [
     OrderComponent,
     ReceiptComponent,
-    MyFilterPipe
+    itemFilter,
+    supplyFilter,
+    customersFilter
   ],
   providers:[
     HttpService,

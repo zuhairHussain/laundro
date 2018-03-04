@@ -38,6 +38,13 @@ getItems() {
            
         })
 }
+getCustomers() {
+    return this.http
+        .get( GlobalService.serverApi +'customers/?format=json')
+        .map(data => {
+            return data.json();
+        })
+}
 getPricing() {
     return this.http
         .get( GlobalService.serverApi +'pricing-units/?format=json')
@@ -57,6 +64,13 @@ getSupplies() {
             }
             return dta;
         })
+}
+getSupplies2() {
+    return this.http
+    .get( GlobalService.serverApi +'supplies/?format=json')
+    .map(data => {
+        return data.json();
+    })
 }
 saveData(data){
     return this.http

@@ -1,37 +1,47 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-    name: 'myfilter',
+    name: 'itemFilter',
     pure: false
 })
-export class MyFilterPipe implements PipeTransform {
-    transform(items: any[], filter: any): any {
+export class itemFilter implements PipeTransform {
+    transform(items, filter: any): any {
         if (!items || !filter) {
             return items;
         }
-        
-        // filter items array, items which match and return true will be
-        // kept, false will be filtered out
-          return JSON.stringify(items.filter(item => item.price_unit_id == filter));
+        const result = items.filter(data => data.id == filter);
+        return result[0];
+       
+    }
+}
 
-        
+@Pipe({
+    name: 'supplyFilter',
+    pure: false
+})
+export class supplyFilter implements PipeTransform {
+    transform(items, filter: any): any {
+        if (!items || !filter) {
+            return items;
+        }
+        const result = items.filter(data => data.id == filter);
+        return result[0];
+       
+    }
+}
 
-        // return items.filter(item => {
-          
-        //   if(filter.length > 1){
-        //     let arr = [];
-        //     for (let f of filter) {
-        //         if (item.id == f) {
-        //           arr.push(item);
-        //         }
-        //     }
-        //     console.log(arr)
-        //   }
-        //   else{
-        //     return item.id == filter;
-        //   }
-         
-        // });
+
+@Pipe({
+    name: 'customersFilter',
+    pure: false
+})
+export class customersFilter implements PipeTransform {
+    transform(items, filter: any): any {
+        if (!items || !filter) {
+            return items;
+        }
+        const result = items.filter(data => data.id == filter);
+        return result[0];
        
     }
 }
