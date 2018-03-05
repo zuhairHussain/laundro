@@ -31,7 +31,7 @@
         
         <div *ngFor="let supply of data.supplies" class="mb20">
             <span *ngIf="data.supplies_pricing == 0">{{ (supplies | supplyFilter : supply).name }} = {{ (supplies | supplyFilter : supply).price_per_bag *  data.requestbag_set.length}}</span>
-            <span *ngIf="data.supplies_pricing == 1">{{ (supplies | supplyFilter : supply).name }} = {{ (supplies | supplyFilter : supply).price_per_lb }}</span>
+            <span *ngIf="data.supplies_pricing == 1">{{ (supplies | supplyFilter : supply).name }} = {{ (supplies | supplyFilter : supply).price_per_lb *  weight}}</span>
             <span *ngIf="data.supplies_pricing == 2">{{ (supplies | supplyFilter : supply).name }} = {{ (supplies | supplyFilter : supply).price_custom }}</span>
         </div>
 

@@ -1,6 +1,5 @@
-import { Component,Input } from '@angular/core';
+import { Component,Input, DoCheck } from '@angular/core';
 import { HttpService } from '../../../@core/data/http-client';
-import { supplyFilter } from '../../pipe';
 
 @Component({
   selector: 'Receipt',
@@ -8,12 +7,24 @@ import { supplyFilter } from '../../pipe';
   templateUrl: './receipt.component.html',
 })
 
-export class ReceiptComponent {
-  @Input() data:object;
-  @Input() orderno:object;
-  @Input() items:object;
-  @Input() supplies:object;
-  @Input() customers:object;
+export class ReceiptComponent implements DoCheck{
+  @Input() data;
+  @Input() orderno;
+  @Input() items;
+  @Input() supplies;
+  @Input() totalWeight;
+  @Input() customers;
+  weight;
+
+  constructor(){
+
+  }
+  ngDoCheck(){
+    this.weight = this.totalWeight.reduce(
+      ( a, b ) => parseInt(a)  + parseInt(b),
+      0
+    );
+  }
   
 }
 

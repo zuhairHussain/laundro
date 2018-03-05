@@ -43,7 +43,7 @@
                           <div class="col-sm-4" *ngFor="let data2 of data.requestbag_set;let i = index">
                             <div class="input-group box-bags-inner box-bags">
                               <label>Bag {{i + 1}} <span class="inforequired">*</span></label>
-                              <input placeholder="Weight" class="form-control" type="text" (input)="data.requestbag_set[i].weight = $event.target.value;"/>
+                              <input placeholder="Weight" class="form-control" type="text" (input)="weightChange($event, i)"/>
                                 
                                 <div class="flex position-r" *ngFor="let item2 of data.requestbag_set[i].items;let in = index">
                                     <select (change)="selitm($event.target.value, in, i)" class="form-control mt10 selc">
@@ -146,7 +146,7 @@
           </nb-card-header>
         
           <nb-card-body>
-            <Receipt [data]='data' [orderno]='orderno' [items]='items' [supplies]='supplies2' [customers]='customers'></Receipt>
+            <Receipt [data]='data' [orderno]='orderno' [items]='items' [supplies]='supplies2' [customers]='customers' [totalWeight]="totalWeight"></Receipt>
           </nb-card-body>
         </nb-card>
   </nb-layout-column>

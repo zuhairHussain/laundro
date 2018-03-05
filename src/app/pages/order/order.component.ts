@@ -26,6 +26,7 @@ export class OrderComponent implements OnInit,DoCheck {
   public pricing;
   public supplies2;
   public customers;
+  public totalWeight = [];
   
   
   public searchControl: FormControl;
@@ -101,6 +102,7 @@ export class OrderComponent implements OnInit,DoCheck {
   
   addBags(event){
     let arr = [];
+    let wei = []
     for(let i = 1 ; i <= event ; i++){
       arr.push(
         {
@@ -109,11 +111,16 @@ export class OrderComponent implements OnInit,DoCheck {
           items: [{quantity : 0, item : null }]
       }
       )
-      console.log(i)
+      wei.push(0)
     }
     this.data.requestbag_set = arr;
+    this.totalWeight = wei;
   }
-
+  weightChange(e, i){
+    this.data.requestbag_set[i].weight = e.target.value;
+    this.totalWeight[i] = e.target.value;
+    console.log(this.totalWeight)
+  }
 
   qty(val, i , i2){
     console.log(this.data.requestbag_set);
@@ -219,7 +226,7 @@ export class OrderComponent implements OnInit,DoCheck {
   }
 
   submit(){
-    console.log(this.data.customer)
+    console.log(this.data)
     this.loading = true;
     this.suberr = "";
     this.sucess = "";
